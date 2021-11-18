@@ -36,6 +36,11 @@ public class Main {
 
 	
 	
+	/**
+	 * Main process
+	 * @param args
+	 * @throws RenamerException
+	 */
 	public static void main(String[] args) throws RenamerException {
 		startTime = Instant.now();
 		
@@ -43,37 +48,56 @@ public class Main {
 		
 		endTime = Instant.now();
 		
-		generateOutput();
+		finalizeProcessReport();
 	}
 
 	
-	private static void generateOutput() {
-		generateSummary();
+	/**
+	 * Finalize and write processing log to console.
+	 */
+	private static void finalizeProcessReport() {
+		addSummaryToLog();
 		writeProcessingLog();
 	}
 
 
+	/**
+	 * Write processing log to console.
+	 */
 	private static void writeProcessingLog() {
 		for (String s : processingLog) {
 			System.out.println(s);
 		}
 	}
 
-
-	private static void generateSummary() {
+	
+	/**
+	 * Add processing summary text to processing log before writing to console.
+	 */
+	private static void addSummaryToLog() {
 		processingLog.add("\n### Processing ended ###");
 		processingLog.add("\nFiles processed: " + filesProcessed);
 		processingLog.add("\nTotal processing time in seconds: " + Duration.between(startTime, endTime).getSeconds());
 	}
 
 
-	private static void processFiles(File f) throws RenamerException {
-		for (File file : f.listFiles()) {
-			processFile(file);
+	/**
+	 * Process files found in source folder
+	 * @param file		Array of files found in source folder
+	 * @throws RenamerException
+	 */
+	private static void processFiles(File file) throws RenamerException {
+		for (File f : file.listFiles()) {
+			processFile(f);
 		}
 	}
 
 	
+	/**
+	 * Process file found in source folder.
+	 * @param file		File currently being processed
+	 * @throws RenamerException
+	 */
 	private static void processFile(File file) throws RenamerException {
 		if (file.isFile() && file.getName().endsWith(FILE_SUFFIX)) {
 			filesProcessed++;
@@ -90,6 +114,12 @@ public class Main {
 	}
 
 	
+	/**
+	 * Parse file to XML document.
+	 * @param file		Current file being processed
+	 * @return	document
+	 * @throws RenamerException
+	 */
 	private static Document parseInputFile(File file) throws RenamerException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -108,6 +138,12 @@ public class Main {
 	}
 
 	
+	/**
+	 * Write a file to target folder replacing "-" with "_" in filename as they are not supported in SAP PO.
+	 * @param file		Current file being processed
+	 * @param document	Parsed XML document with possible changes in attribute "schemaLocation"
+	 * @throws RenamerException
+	 */
 	private static void writeDocumentToFile(File file, Document document) throws RenamerException {
 		try {
 			TransformerFactory tf = TransformerFactory.newInstance();
@@ -124,9 +160,14 @@ public class Main {
 	}
 
 	
-	private static void processNodeList(NodeList includeNL, String scehamLocationAttributeName) {
-		for (int i = 0; i < includeNL.getLength(); i++) {
-			Node n = includeNL.item(i);
+	/**
+	 * Search for "schemaLocation" attribute and rename to a valid SAP PO value.
+	 * @param elementNodeList		NodeList for element "include" or "import" plus attributes
+	 * @param scehamLocationAttributeName	Name of attribute to search for and rename
+	 */
+	private static void processNodeList(NodeList elementNodeList, String scehamLocationAttributeName) {
+		for (int i = 0; i < elementNodeList.getLength(); i++) {
+			Node n = elementNodeList.item(i);
 
 			Node includeSchemaLocation = n.getAttributes().getNamedItem(scehamLocationAttributeName);
 			renameAttribute(includeSchemaLocation);
@@ -134,6 +175,11 @@ public class Main {
 	}
 
 	
+	/**
+	 * Change attribute value to a valid SAP PO value, replacing "-" with "_" to match the filename change.
+	 * This makes sure external references are still valid.
+	 * @param includeSchemaLocation
+	 */
 	private static void renameAttribute(Node includeSchemaLocation) {
 		if (includeSchemaLocation != null) {
 			// Rename existing attribute "import" or "include" with same name using "_" instead of "-" which is not supported in SAP PO
