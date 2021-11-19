@@ -133,7 +133,10 @@ public class Main {
 			props.load(is);
 		} catch (IOException e) {
 			throw new RenamerException("Could not load properties file from local ressources: " + e.getMessage());
+		} catch (NullPointerException npe) {
+			throw new RenamerException("Could not find properties file, please create it in ressources folder. Error: " + npe.getMessage());
 		}
+		
 		return props;
 	}
 
@@ -163,7 +166,7 @@ public class Main {
 	private static void addSummaryToLog() {
 		processingLog.add("\n### Processing ended ###");
 		processingLog.add("\nFiles processed: " + filesProcessed);
-		processingLog.add("\nTotal processing time in seconds: " + Duration.between(startTime, endTime).getSeconds());
+		processingLog.add("\nTotal processing time (ms): " + Duration.between(startTime, endTime).getNano() / 1000000);
 	}
 
 
