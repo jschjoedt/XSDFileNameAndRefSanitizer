@@ -2,9 +2,11 @@ package dk.radius.xsd.file.ref.sanitizer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,12 +25,21 @@ import org.xml.sax.SAXException;
 
 public class Main {
 
-	private static final String SOURCE_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\";
-	private static final String TARGET_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\Renamed\\";
-	private static final String RENAME_SOURCE = "-";
-	private static final String RENAME_TARGET = "_";
-	private static final String FILE_SUFFIX = ".xsd";
-	private static final String ATTR_NAME_SCHEMA_LOCATION = "schemaLocation";
+//	private static final String SOURCE_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\";
+//	private static final String TARGET_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\Renamed\\";
+//	private static final String RENAME_SOURCE = "-";
+//	private static final String RENAME_TARGET = "_";
+//	private static final String FILE_SUFFIX = ".xsd";
+//	private static final String ATTR_NAME_SCHEMA_LOCATION = "schemaLocation";
+
+	private static String SOURCE_FOLDER = null;
+	private static String TARGET_FOLDER = null;
+	private static String RENAME_SOURCE = null;
+	private static String RENAME_TARGET = null;
+	private static String FILE_SUFFIX = null;
+	private static String ATTR_NAME_SCHEMA_LOCATION = null;
+
+	private static final String RUN_PROPERTIES = "/sanitizer.properties";
 	private static int filesProcessed = 0;
 	private static Instant startTime;
 	private static Instant endTime;
@@ -44,6 +55,8 @@ public class Main {
 	public static void main(String[] args) throws RenamerException {
 		startTime = Instant.now();
 		
+		processRunProperties();
+		
 		processFiles(new File(SOURCE_FOLDER));
 		
 		endTime = Instant.now();
@@ -52,6 +65,79 @@ public class Main {
 	}
 
 	
+	/**
+	 * Read, set and validate runtime properties.
+	 * @throws RenamerException
+	 */
+	private static void processRunProperties() throws RenamerException {
+		Properties props = readPropertiesFile();
+		
+		setProperties(props);
+
+		validateProperties();
+	}
+
+	
+	/**
+	 * Make sure all mandatory run properties has been correctly set.
+	 * @throws RenamerException
+	 */
+	private static void validateProperties() throws RenamerException {
+		String errorMessage = null;
+		
+		if (SOURCE_FOLDER == null) {
+			errorMessage = "SOURCE_FOLDER propery could is missing in properties file, please maintain";
+		} else if (TARGET_FOLDER == null) {
+			errorMessage = "TARGET_FOLDER propery could is missing in properties file, please maintain";
+		} else if (RENAME_SOURCE == null) {
+			errorMessage = "RENAME_SOURCE propery could is missing in properties file, please maintain";
+		} else if (RENAME_TARGET == null) {
+			errorMessage = "RENAME_TARGET propery could is missing in properties file, please maintain";
+		} else if (FILE_SUFFIX == null) {
+			errorMessage = "FILE_SUFFIX propery could is missing in properties file, please maintain";
+		} else if (ATTR_NAME_SCHEMA_LOCATION == null) {
+			errorMessage = "ATTR_NAME_SCHEMA_LOCATION propery could is missing in properties file, please maintain";
+		}
+		
+		if (errorMessage != null) {
+			throw new RenamerException(errorMessage);
+		}
+		
+	}
+
+
+	/**
+	 * Set local variables read from properties file.
+	 * @param props
+	 */
+	private static void setProperties(Properties props) {
+		SOURCE_FOLDER = props.getProperty("SOURCE_FOLDER");
+		TARGET_FOLDER = props.getProperty("TARGET_FOLDER");
+		RENAME_SOURCE = props.getProperty("RENAME_SOURCE");
+		RENAME_TARGET = props.getProperty("RENAME_TARGET");
+		FILE_SUFFIX = props.getProperty("FILE_SUFFIX");
+		ATTR_NAME_SCHEMA_LOCATION = props.getProperty("ATTR_NAME_SCHEMA_LOCATION");
+	}
+
+
+	/**
+	 * Read properties file from ressource folder.
+	 * @return	props	Properties loaded
+	 * @throws RenamerException
+	 */
+	private static Properties readPropertiesFile() throws RenamerException {
+		Properties props = new Properties();
+		InputStream is = Main.class.getResourceAsStream(RUN_PROPERTIES);
+		
+		try {
+			props.load(is);
+		} catch (IOException e) {
+			throw new RenamerException("Could not load properties file from local ressources: " + e.getMessage());
+		}
+		return props;
+	}
+
+
 	/**
 	 * Finalize and write processing log to console.
 	 */
