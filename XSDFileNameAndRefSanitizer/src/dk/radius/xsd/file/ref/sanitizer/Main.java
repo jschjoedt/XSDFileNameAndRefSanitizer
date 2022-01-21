@@ -25,13 +25,6 @@ import org.xml.sax.SAXException;
 
 public class Main {
 
-//	private static final String SOURCE_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\";
-//	private static final String TARGET_FOLDER = "C:\\Users\\jsch\\Desktop\\XSD 20210410\\Renamed\\";
-//	private static final String RENAME_SOURCE = "-";
-//	private static final String RENAME_TARGET = "_";
-//	private static final String FILE_SUFFIX = ".xsd";
-//	private static final String ATTR_NAME_SCHEMA_LOCATION = "schemaLocation";
-
 	private static String SOURCE_FOLDER = null;
 	private static String TARGET_FOLDER = null;
 	private static String RENAME_SOURCE = null;
@@ -112,11 +105,17 @@ public class Main {
 	 */
 	private static void setProperties(Properties props) {
 		SOURCE_FOLDER = props.getProperty("SOURCE_FOLDER");
+		System.out.println("SOURCE_FOLDER: " + SOURCE_FOLDER);
 		TARGET_FOLDER = props.getProperty("TARGET_FOLDER");
+		System.out.println("TARGET_FOLDER: " + TARGET_FOLDER);
 		RENAME_SOURCE = props.getProperty("RENAME_SOURCE");
+		System.out.println("RENAME_SOURCE: " + RENAME_SOURCE);
 		RENAME_TARGET = props.getProperty("RENAME_TARGET");
+		System.out.println("RENAME_TARGET: " + RENAME_TARGET);
 		FILE_SUFFIX = props.getProperty("FILE_SUFFIX");
+		System.out.println("FILE_SUFFIX: " + FILE_SUFFIX);
 		ATTR_NAME_SCHEMA_LOCATION = props.getProperty("ATTR_NAME_SCHEMA_LOCATION");
+		System.out.println("ATTR_NAME_SCHEMA_LOCATION: " + ATTR_NAME_SCHEMA_LOCATION);
 	}
 
 
