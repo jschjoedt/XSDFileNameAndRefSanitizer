@@ -79,17 +79,17 @@ public class Main {
 		String errorMessage = null;
 		
 		if (SOURCE_FOLDER == null) {
-			errorMessage = "SOURCE_FOLDER propery could is missing in properties file, please maintain";
+			errorMessage = "SOURCE_FOLDER property is missing in properties file, please maintain";
 		} else if (TARGET_FOLDER == null) {
-			errorMessage = "TARGET_FOLDER propery could is missing in properties file, please maintain";
+			errorMessage = "TARGET_FOLDER property is missing in properties file, please maintain";
 		} else if (RENAME_SOURCE == null) {
-			errorMessage = "RENAME_SOURCE propery could is missing in properties file, please maintain";
+			errorMessage = "RENAME_SOURCE property is missing in properties file, please maintain";
 		} else if (RENAME_TARGET == null) {
-			errorMessage = "RENAME_TARGET propery could is missing in properties file, please maintain";
+			errorMessage = "RENAME_TARGET property is missing in properties file, please maintain";
 		} else if (FILE_SUFFIX == null) {
-			errorMessage = "FILE_SUFFIX propery could is missing in properties file, please maintain";
+			errorMessage = "FILE_SUFFIX property is missing in properties file, please maintain";
 		} else if (ATTR_NAME_SCHEMA_LOCATION == null) {
-			errorMessage = "ATTR_NAME_SCHEMA_LOCATION propery could is missing in properties file, please maintain";
+			errorMessage = "ATTR_NAME_SCHEMA_LOCATION property is missing in properties file, please maintain";
 		}
 		
 		if (errorMessage != null) {
